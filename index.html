@@ -47,6 +47,8 @@
 
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
 <script>
 let clientId = localStorage.getItem("clientId");
 
@@ -64,27 +66,24 @@ socket.on("loadMessages", (messages) => {
     messages.forEach(renderMessage);
 });
 
-socket.on("newMessage", (msg) => {
-    renderMessage(msg);
-});
+socket.on("newMessage", renderMessage);
 
 socket.on("updateMessage", (msg) => {
     const div = document.getElementById(msg.id);
-    if (div) {
-        div.innerHTML = formatMessage(msg);
-    }
+    if (div) div.innerHTML = formatMessage(msg);
 });
 
 function sendMessage() {
-    const text = document.getElementById("msg").value.trim();
+    const input = document.getElementById("msg");
+    const text = input.value.trim();
     if (!text) return;
 
     socket.emit("sendMessage", {
-        text: text,
+        text,
         sender: "client"
     });
 
-    document.getElementById("msg").value = "";
+    input.value = "";
 }
 
 function editMessage(id) {
@@ -92,7 +91,8 @@ function editMessage(id) {
     if (!newText) return;
 
     socket.emit("editMessage", {
-        id: id,
+        clientId,
+        id,
         text: newText,
         sender: "client"
     });
@@ -116,4 +116,5 @@ function formatMessage(msg) {
 </body>
 
 </html>
+
 
