@@ -76,7 +76,7 @@ function sendMessage() {
 
     socket.emit("sendMessage", {
         text: text,
-        sender: "admin"   // ← ВАЖНО
+        sender: "client"   // ← ВАЖНО
     });
 
     document.getElementById("msg").value = "";
@@ -97,4 +97,5 @@ function formatMessage(msg) {
 </body>
 
 </html>
+
 
