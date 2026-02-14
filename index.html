@@ -50,10 +50,6 @@
 <script>
 const socket = io("https://g4s-chat-server.onrender.com");
 
-socket.on("connect", () => {
-    console.log("ADMIN CONNECTED");
-});
-
 socket.on("loadMessages", (messages) => {
     document.getElementById("chat").innerHTML = "";
     messages.forEach(renderMessage);
@@ -76,10 +72,21 @@ function sendMessage() {
 
     socket.emit("sendMessage", {
         text: text,
-        sender: "client"   // ← ВАЖНО
+        sender: "client"
     });
 
     document.getElementById("msg").value = "";
+}
+
+function editMessage(id) {
+    const newText = prompt("Изменить сообщение:");
+    if (!newText) return;
+
+    socket.emit("editMessage", {
+        id: id,
+        text: newText,
+        sender: "client"
+    });
 }
 
 function renderMessage(msg) {
@@ -90,12 +97,13 @@ function renderMessage(msg) {
 }
 
 function formatMessage(msg) {
-    return `<b>${msg.sender}:</b> ${msg.text} 
-    ${msg.edited && msg.sender === "client" ? "(изменено)" : ""}`;
+    return `
+        <b>${msg.sender}:</b> ${msg.text}
+        ${msg.edited && msg.sender === "client" ? " (изменено)" : ""}
+        ${msg.sender === "client" ? `<button onclick="editMessage(${msg.id})">✏</button>` : ""}
+    `;
 }
 </script>
 </body>
 
 </html>
-
-
