@@ -50,11 +50,18 @@
 <script>
 const socket = io("https://g4s-chat-server.onrender.com");
 
+socket.on("connect", () => {
+    console.log("ADMIN CONNECTED");
+});
+
 socket.on("loadMessages", (messages) => {
+    document.getElementById("chat").innerHTML = "";
     messages.forEach(renderMessage);
 });
 
-socket.on("newMessage", renderMessage);
+socket.on("newMessage", (msg) => {
+    renderMessage(msg);
+});
 
 socket.on("updateMessage", (msg) => {
     const div = document.getElementById(msg.id);
@@ -69,7 +76,7 @@ function sendMessage() {
 
     socket.emit("sendMessage", {
         text: text,
-        sender: "client"
+        sender: "admin"   // ← ВАЖНО
     });
 
     document.getElementById("msg").value = "";
@@ -90,3 +97,4 @@ function formatMessage(msg) {
 </body>
 
 </html>
+
