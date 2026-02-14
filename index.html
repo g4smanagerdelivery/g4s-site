@@ -48,7 +48,16 @@
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 <script>
-const socket = io("https://g4s-chat-server.onrender.com");
+let clientId = localStorage.getItem("clientId");
+
+if (!clientId) {
+    clientId = "client_" + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem("clientId", clientId);
+}
+
+const socket = io("https://g4s-chat-server.onrender.com", {
+    query: { clientId }
+});
 
 socket.on("loadMessages", (messages) => {
     document.getElementById("chat").innerHTML = "";
@@ -67,7 +76,7 @@ socket.on("updateMessage", (msg) => {
 });
 
 function sendMessage() {
-    const text = document.getElementById("msg").value;
+    const text = document.getElementById("msg").value.trim();
     if (!text) return;
 
     socket.emit("sendMessage", {
@@ -107,3 +116,4 @@ function formatMessage(msg) {
 </body>
 
 </html>
+
