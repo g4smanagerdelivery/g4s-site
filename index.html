@@ -2,75 +2,108 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat Support</title>
+<title>Мой сайт</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
 }
 
-/* Заголовок */
-h2 {
-    margin: 0;
-    padding: 15px;
-    background: #007bff;
+/* Пример сайта */
+header {
+    background: #222;
     color: white;
+    padding: 20px;
     text-align: center;
 }
 
-/* Чат */
+main {
+    padding: 20px;
+}
+
+/* ===== КНОПКА ЧАТА ===== */
+#chatButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 999;
+}
+
+/* ===== ОКНО ЧАТА ===== */
+#chatWidget {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 999;
+}
+
+/* Заголовок */
+#chatHeader {
+    background: #007bff;
+    color: white;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Сообщения */
 #chat {
     flex: 1;
     overflow-y: auto;
-    padding: 15px;
-    background: #f5f5f5;
-    font-size: 16px; /* крупнее текст */
-}
-
-/* Сообщение */
-.message {
-    margin-bottom: 12px;
-}
-
-/* Поле ввода */
-#inputArea {
-    display: flex;
     padding: 10px;
+    background: #f5f5f5;
+    font-size: 14px;
+}
+
+/* Ввод */
+#chatInput {
+    display: flex;
     border-top: 1px solid #ccc;
-    background: white;
 }
 
 #msg {
     flex: 1;
-    padding: 12px;
-    font-size: 16px;
+    padding: 10px;
+    border: none;
+    font-size: 14px;
 }
 
-button {
-    padding: 12px 18px;
-    font-size: 16px;
-    margin-left: 5px;
+#chatInput button {
+    padding: 10px 15px;
+    border: none;
     background: #007bff;
     color: white;
-    border: none;
+    cursor: pointer;
 }
 
 /* 📱 Мобильная версия */
 @media (max-width: 768px) {
-    #chat {
-        font-size: 18px;
-    }
-
-    #msg {
-        font-size: 18px;
-    }
-
-    button {
-        font-size: 18px;
+    #chatWidget {
+        width: 95%;
+        height: 80%;
+        right: 2.5%;
+        bottom: 80px;
     }
 }
 </style>
@@ -78,18 +111,36 @@ button {
 
 <body>
 
-<h2>Чат с поддержкой</h2>
+<header>
+    <h1>Мой сайт</h1>
+</header>
 
-<div id="chat"></div>
+<main>
+    <p>Здесь обычный сайт. Чат открывается через кнопку внизу.</p>
+</main>
 
-<div id="inputArea">
-    <input id="msg" placeholder="Введите сообщение">
-    <button onclick="sendMessage()">Отправить</button>
+<!-- 💬 КНОПКА -->
+<div id="chatButton" onclick="toggleChat()">💬</div>
+
+<!-- 💬 ОКНО ЧАТА -->
+<div id="chatWidget">
+    <div id="chatHeader">
+        <span>Поддержка</span>
+        <span style="cursor:pointer;" onclick="toggleChat()">✖</span>
+    </div>
+
+    <div id="chat"></div>
+
+    <div id="chatInput">
+        <input id="msg" placeholder="Введите сообщение">
+        <button onclick="sendMessage()">➤</button>
+    </div>
 </div>
 
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 <script>
+// Уникальный ID клиента
 const clientId = localStorage.getItem("clientId") || Date.now().toString();
 localStorage.setItem("clientId", clientId);
 
@@ -97,6 +148,13 @@ const socket = io("https://g4s-chat-server.onrender.com", {
     query: { clientId }
 });
 
+// Открыть/закрыть чат
+function toggleChat() {
+    const chat = document.getElementById("chatWidget");
+    chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+}
+
+// Загрузка сообщений
 socket.on("loadMessages", (messages) => {
     document.getElementById("chat").innerHTML = "";
     messages.forEach(renderMessage);
@@ -120,12 +178,10 @@ function sendMessage() {
 
 function renderMessage(msg) {
     const div = document.createElement("div");
-    div.className = "message";
     div.id = msg.id;
     div.innerHTML = formatMessage(msg);
     document.getElementById("chat").appendChild(div);
 
-    // авто-прокрутка вниз
     const chat = document.getElementById("chat");
     chat.scrollTop = chat.scrollHeight;
 }
