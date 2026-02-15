@@ -28,10 +28,7 @@ header {
     z-index: 1000;
 }
 
-.container {
-    width: 90%;
-    margin: auto;
-}
+.container { width: 90%; margin: auto; }
 
 nav {
     display: flex;
@@ -39,9 +36,7 @@ nav {
     align-items: center;
 }
 
-.logo img {
-    height: 45px;
-}
+.logo img { height: 45px; }
 
 nav ul {
     list-style: none;
@@ -88,27 +83,28 @@ nav ul li a {
     width: 100%;
     height: 100%;
     background-size: cover;
+    background-position: center;
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
 }
 
 .slide.active { opacity: 1; }
 
-/* Фокус картинок */
+/* Фокус ПК */
 .slide:nth-child(1) { background-position: 25% center; }
 .slide:nth-child(2) { background-position: center; }
-.slide:nth-child(3) { background-position: 30% center; } /* исправили img3 */
+.slide:nth-child(3) { background-position: 30% center; }
 
+/* CONTENT */
 .content {
     position: absolute;
     z-index: 2;
-    width: 80%;
+    width: 85%;
     max-width: 900px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    transition: opacity 0.5s;
 }
 
 .hidden { display: none; }
@@ -163,10 +159,23 @@ footer {
 #chatInput input { flex: 1; padding: 8px; border: none; }
 #chatInput button { width: 50px; border: none; background: #007bff; color: white; cursor: pointer; }
 
-/* MOBILE */
+/* 🔥 МОБИЛЬНАЯ АДАПТАЦИЯ */
 @media (max-width: 768px) {
-    h1 { font-size: 24px; }
+
+    h1 { font-size: 22px; }
     p { font-size: 15px; }
+
+    .logo img { height: 35px; }
+
+    /* Меняем фокус картинок под телефон */
+    .slide:nth-child(1) { background-position: 40% center; }
+    .slide:nth-child(2) { background-position: 50% center; }
+    .slide:nth-child(3) { background-position: 45% center; }
+
+    /* Немного уменьшаем затемнение */
+    .hero::after {
+        background: rgba(0,0,0,0.45);
+    }
 }
 </style>
 </head>
@@ -195,39 +204,34 @@ footer {
 <div class="slide" style="background-image:url('img3.jpg')"></div>
 </div>
 
-<!-- Главная -->
 <div id="home" class="content">
 <h1>Надежная доставка ценностей по всему миру</h1>
 </div>
 
-<!-- О компании -->
 <div id="about" class="content hidden">
 <h1>О компании</h1>
 <p>
 G4S — британская транснациональная частная военная и инкассаторская служба,
 со штаб-квартирой в Лондоне, крупнейшая в Европе и Африке, основана в 1901 году.
-По числу сотрудников (по данным самой компании — около 800 тысяч).
-Охраняли и перевозили ценности и медали на Олимпиаде 2012 в Лондоне.
+По числу сотрудников — около 800 тысяч.
+Охраняли и перевозили ценности на Олимпиаде 2012 в Лондоне.
 <br><br>
-Действует более чем в 90 странах (Британия, Германия, Италия, Испания,
-Франция, Китай, Япония, Казахстан, Узбекистан, Мали, Конго, Нигерия и другие).
+Действует более чем в 90 странах.
 </p>
 </div>
 
-<!-- Услуги -->
 <div id="services" class="content hidden">
 <h1>Наши услуги</h1>
 <p>
-• Сбор и доставка выручки — регулярная перевозка наличных в банк.<br><br>
-• Транспортировка ценностей — доставка ценных бумаг, ювелирных изделий и документов.<br><br>
-• Доставка разменной монеты — привоз мелких купюр и монет из банка.<br><br>
-• Сопровождение материально ответственных лиц — обеспечение безопасности при перевозке ценностей.
+• Сбор и доставка выручки<br><br>
+• Транспортировка ценностей<br><br>
+• Доставка разменной монеты<br><br>
+• Сопровождение материально ответственных лиц
 </p>
 </div>
 
 <footer>
-© 2026 G4S. Все права защищены.  
-<br>
+© 2026 G4S. Все права защищены.<br>
 Великобритания, Лондон, Victoria Street, 105, 5-й эт.
 </footer>
 
@@ -245,22 +249,20 @@ G4S — британская транснациональная частная �
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 <script>
-// SLIDER
 let slides = document.querySelectorAll(".slide");
 let current = 0;
+
 setInterval(() => {
 slides[current].classList.remove("active");
 current = (current + 1) % slides.length;
 slides[current].classList.add("active");
 }, 4000);
 
-// Навигация
 function showSection(id){
 document.querySelectorAll(".content").forEach(el => el.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 
-// CHAT
 const chatBox = document.getElementById("chatBox");
 document.getElementById("chatToggle").onclick = () => {
 chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
