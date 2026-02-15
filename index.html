@@ -11,13 +11,15 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
+    overflow-x: hidden;
     font-family: Arial, sans-serif;
     color: white;
+    background: black;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
+
 header {
     background: #111;
     height: 70px;
@@ -36,19 +38,23 @@ nav {
     align-items: center;
 }
 
-/* 3D ЛОГО */
+/* ===== 3D ЛОГО (правильная качель) ===== */
+
 .logo { perspective: 800px; }
 
 .logo img {
     height: 45px;
     animation: swing3D 4s ease-in-out infinite;
+    transform-style: preserve-3d;
 }
 
 @keyframes swing3D {
-    0%   { transform: rotateY(-25deg); }
-    50%  { transform: rotateY(25deg); }
-    100% { transform: rotateY(-25deg); }
+    0%   { transform: rotateY(-35deg); }
+    50%  { transform: rotateY(35deg); }
+    100% { transform: rotateY(-35deg); }
 }
+
+/* ===== NAV ===== */
 
 nav ul {
     list-style: none;
@@ -75,14 +81,15 @@ nav ul li a:hover {
     background: rgba(255,255,255,0.15);
 }
 
-/* HERO */
+/* ===== HERO / СЛАЙДЕР ===== */
+
 .hero {
     position: relative;
-    height: calc(100vh - 70px);
     margin-top: 70px;
-    overflow: hidden;
+    min-height: calc(100vh - 70px);
 }
 
+/* затемнение */
 .hero::after {
     content: "";
     position: absolute;
@@ -94,6 +101,7 @@ nav ul li a:hover {
     z-index: 1;
 }
 
+/* слайды */
 .slider {
     position: absolute;
     width: 100%;
@@ -104,38 +112,48 @@ nav ul li a:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-size: cover;
+    background-size: contain;   /* ВАЖНО — не обрезает */
+    background-repeat: no-repeat;
     background-position: center;
+    background-color: black;
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
 }
 
 .slide.active { opacity: 1; }
 
+/* ===== CONTENT ===== */
+
 .content {
-    position: absolute;
+    position: relative;
     z-index: 2;
-    width: 85%;
+    width: 90%;
     max-width: 900px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    margin: auto;
+    padding: 60px 20px 100px;
     text-align: center;
 }
 
 .hidden { display: none; }
 
 h1 { font-size: 36px; margin-bottom: 20px; }
-p { font-size: 18px; }
+
+#about p, #services p {
+    font-size: 17px;
+    line-height: 1.6;
+    text-align: left;
+    background: rgba(0,0,0,0.65);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+/* ===== FOOTER ===== */
 
 footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
     text-align: center;
-    padding: 15px;
+    padding: 20px;
     font-size: 14px;
-    z-index: 2;
+    background: rgba(0,0,0,0.8);
 }
 
 /* ===== ЧАТ ===== */
@@ -204,6 +222,39 @@ footer {
     cursor: pointer;
     color: blue;
 }
+
+/* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+
+@media (max-width: 768px) {
+
+    h1 { font-size: 24px; }
+
+    #about p, #services p {
+        font-size: 15px;
+    }
+
+    nav ul {
+        gap: 12px;
+    }
+
+    nav ul li a {
+        font-size: 14px;
+        padding: 5px 8px;
+    }
+
+    .logo img {
+        height: 38px;
+    }
+
+    .slide {
+        background-size: contain; /* не обрезает */
+    }
+
+    #chatBox {
+        width: 95%;
+        right: 2.5%;
+    }
+}
 </style>
 </head>
 
@@ -241,7 +292,7 @@ footer {
 со штаб-квартирой в Лондоне, крупнейший в Европе и Африке, основана в 1901 году. 
 По числу сотрудников (по данным самой компании — около 800 тысяч). 
 Охраняли и перевозили ценности и медали на Олимпиаде 2012 в Лондоне 
-</br>Действует в более чем 90 странах 
+<br><br>Действует в более чем 90 странах 
 (Британия, Германия, Италия, Испания, Франция, Китай, Япония, Казахстан, 
 Узбекистан, Мали, Конго, Нигерия и другие)</p>
 </div>
@@ -249,29 +300,16 @@ footer {
 <div id="services" class="content hidden">
 <h1>Наши услуги</h1>
 <p>● Сбор и доставка выручки: Регулярная перевозка наличных из торговых точек, офисов, общепита в банк для зачисления на расчетный счет. 
-● Транспортировка ценностей: Доставка ценных бумаг, ювелирных изделий и важных документов. 
-● Доставка разменной монеты: Привоз наличных денег (мелких купюр/монет) из банка в кассу предприятия. 
-● Сопровождение материально ответственных лиц: Обеспечение безопасности сотрудников при перевозке ими ценностей.</p>
+<br><br>● Транспортировка ценностей: Доставка ценных бумаг, ювелирных изделий и важных документов. 
+<br><br>● Доставка разменной монеты: Привоз наличных денег (мелких купюр/монет) из банка в кассу предприятия. 
+<br><br>● Сопровождение материально ответственных лиц: Обеспечение безопасности сотрудников при перевозке ими ценностей.</p>
 </div>
 
 <footer>
 © 2026 G4S. Все права защищены.
-</br>Великобритания, Лондон, Victoria Street, 105, 5-й эт.
+<br>Великобритания, Лондон, Victoria Street, 105, 5-й эт.
 </footer>
 </section>
-
-<!-- ЧАТ -->
-<div id="chatToggle">💬</div>
-
-<div id="chatBox">
-<div id="chat"></div>
-<div id="chatInput">
-<input id="msg" placeholder="Введите сообщение">
-<button onclick="sendMessage()">➤</button>
-</div>
-</div>
-
-<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 <script>
 let slides = document.querySelectorAll(".slide");
@@ -288,64 +326,6 @@ document.querySelectorAll(".content").forEach(el => el.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
 element.classList.add("active");
-}
-
-/* ЧАТ */
-
-const chatBox = document.getElementById("chatBox");
-document.getElementById("chatToggle").onclick = () => {
-chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
-};
-
-let clientId = localStorage.getItem("clientId");
-if (!clientId) {
-clientId = "client_" + Math.random().toString(36).substr(2, 9);
-localStorage.setItem("clientId", clientId);
-}
-
-const socket = io("https://g4s-chat-server.onrender.com", {
-query: { clientId }
-});
-
-socket.on("loadMessages", (messages) => {
-document.getElementById("chat").innerHTML = "";
-messages.forEach(renderMessage);
-});
-
-socket.on("newMessage", (msg) => {
-renderMessage(msg);
-});
-
-socket.on("updateMessage", (msg) => {
-const div = document.getElementById(msg.id);
-if (div) div.innerHTML = formatMessage(msg);
-});
-
-function sendMessage() {
-const text = document.getElementById("msg").value;
-if (!text) return;
-socket.emit("sendMessage", { text: text, sender: "client" });
-document.getElementById("msg").value = "";
-}
-
-function editMessage(id) {
-const newText = prompt("Изменить сообщение:");
-if (!newText) return;
-socket.emit("editMessage", { id: id, text: newText, sender: "client" });
-}
-
-function renderMessage(msg) {
-const div = document.createElement("div");
-div.id = msg.id;
-div.innerHTML = formatMessage(msg);
-document.getElementById("chat").appendChild(div);
-}
-
-function formatMessage(msg) {
-return "<b>" + msg.sender + ":</b> " + msg.text +
-(msg.edited ? " (изменено)" : "") +
-(msg.sender === "client" ? 
-"<span class='edit-btn' onclick='editMessage(" + msg.id + ")'>✏</span>" : "");
 }
 </script>
 
