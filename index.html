@@ -12,10 +12,9 @@ html, body {
     margin: 0;
     padding: 0;
     padding-top: 70px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    height: 100vh;
     overflow-x: hidden;
+    overflow-y: hidden; /* убираем скролл на ПК */
     font-family: Arial, sans-serif;
     color: white;
     background: black;
@@ -89,8 +88,8 @@ nav ul li a:hover {
 
 .hero {
     position: relative;
-    flex: 1;
-    min-height: calc(100vh - 70px);
+    height: calc(100vh - 70px);
+    overflow: hidden;
 }
 
 /* затемнение */
@@ -232,7 +231,9 @@ footer {
 @media (max-width: 768px) {
 
     html, body {
-        padding-top: 95px;
+        height: auto;
+        overflow-y: auto;   /* разрешаем скролл на телефоне */
+        padding-top: 95px;  /* увеличенная высота шапки */
     }
 
     header {
@@ -417,3 +418,4 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
+
