@@ -88,7 +88,8 @@ nav ul li a:hover {
 
 .hero {
     position: relative;
-    height: calc(100vh - 70px);
+    height: 100vh;
+    margin-top: -70px;   /* компенсируем padding body */
     overflow: hidden;
 }
 
@@ -418,4 +419,5 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
+
 
