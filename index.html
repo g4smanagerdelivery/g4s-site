@@ -95,10 +95,11 @@ nav ul li a:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.55);
+    background: rgba(0,0,0,0.25); /* светлее */
     top: 0;
     left: 0;
     z-index: 1;
+    pointer-events: none; /* ВАЖНО — не блокирует чат */
 }
 
 /* слайды */
@@ -112,10 +113,9 @@ nav ul li a:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-size: contain; /* не обрезает */
-    background-repeat: no-repeat;
+    background-size: cover; /* растягивает красиво */
     background-position: center;
-    background-color: black;
+    background-repeat: no-repeat;
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
 }
@@ -227,26 +227,17 @@ footer {
 
 @media (max-width: 768px) {
 
-    h1 { font-size: 24px; }
-
-    #about p, #services p {
-        font-size: 15px;
+    .slide {
+        background-size: contain; /* на телефоне не режет */
+        background-color: black;
     }
 
-    nav ul { gap: 12px; }
-
-    nav ul li a {
-        font-size: 14px;
-        padding: 5px 8px;
+    #chatToggle {
+        z-index: 10000;
     }
-
-    .logo img { height: 38px; }
-
-    .slide { background-size: contain; }
 
     #chatBox {
-        width: 95%;
-        right: 2.5%;
+        z-index: 10000;
     }
 }
 </style>
@@ -397,3 +388,4 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
+
