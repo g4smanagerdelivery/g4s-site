@@ -1,61 +1,97 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>G4S - Инкассаторская служба</title>
-    <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Support</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Заголовок */
+h2 {
+    margin: 0;
+    padding: 15px;
+    background: #007bff;
+    color: white;
+    text-align: center;
+}
+
+/* Чат */
+#chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background: #f5f5f5;
+    font-size: 16px; /* крупнее текст */
+}
+
+/* Сообщение */
+.message {
+    margin-bottom: 12px;
+}
+
+/* Поле ввода */
+#inputArea {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    background: white;
+}
+
+#msg {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 18px;
+    font-size: 16px;
+    margin-left: 5px;
+    background: #007bff;
+    color: white;
+    border: none;
+}
+
+/* 📱 Мобильная версия */
+@media (max-width: 768px) {
+    #chat {
+        font-size: 18px;
+    }
+
+    #msg {
+        font-size: 18px;
+    }
+
+    button {
+        font-size: 18px;
+    }
+}
+</style>
 </head>
+
 <body>
 
-<header>
-    <div class="container">
-        <nav>
-            <h2>G4S</h2>
-            <ul>
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="about.html">О компании</a></li>
-                <li><a href="services.html">Услуги</a></li>
-                <li><a href="contact.html">Контакты</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
+<h2>Чат с поддержкой</h2>
 
-<section class="hero">
-    <h1>Надежная доставка ценностей по всему миру</h1>
-</section>
+<div id="chat"></div>
 
-<section class="section">
-    <div class="container">
-        <h2>Международная доставка</h2>
-        <p style="text-align:center;">
-            G4S предоставляет услуги инкассации и безопасной доставки по всему миру. 
-            Мы гарантируем максимальную защиту, конфиденциальность и точность выполнения задач.
-        </p>
-    </div>
-</section>
-
-<footer>
-    <p>© 2026 G4S. Все права защищены.</p>
-</footer>
-<div id="chatBox" style="position:fixed;bottom:20px;right:20px;width:300px;background:#fff;border:1px solid #ccc;padding:10px;z-index:9999;">
-    <h4>Поддержка</h4>
-    <div id="chat" style="height:150px;overflow:auto;border:1px solid #ddd;margin-bottom:5px;padding:5px;"></div>
-    <input id="msg" placeholder="Введите сообщение" style="width:70%;">
-    <button onclick="sendMessage()">➤</button>
+<div id="inputArea">
+    <input id="msg" placeholder="Введите сообщение">
+    <button onclick="sendMessage()">Отправить</button>
 </div>
 
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
-<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-
 <script>
-let clientId = localStorage.getItem("clientId");
-
-if (!clientId) {
-    clientId = "client_" + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem("clientId", clientId);
-}
+const clientId = localStorage.getItem("clientId") || Date.now().toString();
+localStorage.setItem("clientId", clientId);
 
 const socket = io("https://g4s-chat-server.onrender.com", {
     query: { clientId }
@@ -78,43 +114,26 @@ function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
 
-    socket.emit("sendMessage", {
-        text,
-        sender: "client"
-    });
-
+    socket.emit("sendMessage", { text });
     input.value = "";
-}
-
-function editMessage(id) {
-    const newText = prompt("Изменить сообщение:");
-    if (!newText) return;
-
-    socket.emit("editMessage", {
-        clientId,
-        id,
-        text: newText,
-        sender: "client"
-    });
 }
 
 function renderMessage(msg) {
     const div = document.createElement("div");
+    div.className = "message";
     div.id = msg.id;
     div.innerHTML = formatMessage(msg);
     document.getElementById("chat").appendChild(div);
+
+    // авто-прокрутка вниз
+    const chat = document.getElementById("chat");
+    chat.scrollTop = chat.scrollHeight;
 }
 
 function formatMessage(msg) {
-    return `
-        <b>${msg.sender}:</b> ${msg.text}
-        ${msg.edited && msg.sender === "client" ? " (изменено)" : ""}
-        ${msg.sender === "client" ? `<button onclick="editMessage(${msg.id})">✏</button>` : ""}
-    `;
+    return `<b>${msg.sender}:</b> ${msg.text}`;
 }
 </script>
+
 </body>
-
 </html>
-
-
