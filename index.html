@@ -11,6 +11,7 @@
 html, body {
     margin: 0;
     padding: 0;
+    padding-top: 70px; /* фиксированная шапка */
     min-height: 100%;
     overflow-x: hidden;
     font-family: Arial, sans-serif;
@@ -27,6 +28,7 @@ header {
     align-items: center;
     position: fixed;
     width: 100%;
+    top: 0;
     z-index: 1000;
 }
 
@@ -85,8 +87,7 @@ nav ul li a:hover {
 
 .hero {
     position: relative;
-    margin-top: 70px;
-    min-height: calc(100vh - 70px);
+    min-height: 100vh;
 }
 
 /* затемнение */
@@ -95,11 +96,11 @@ nav ul li a:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.25); /* светлее */
+    background: rgba(0,0,0,0.25);
     top: 0;
     left: 0;
     z-index: 1;
-    pointer-events: none; /* ВАЖНО — не блокирует чат */
+    pointer-events: none;
 }
 
 /* слайды */
@@ -113,7 +114,7 @@ nav ul li a:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-size: cover; /* растягивает красиво */
+    background-size: cover; /* ПК — растянуто красиво */
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0;
@@ -223,11 +224,14 @@ footer {
     color: blue;
 }
 
-/* ===== МОБИЛКА ===== */
+/* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
 
 @media (max-width: 768px) {
 
-    /* ШАПКА */
+    html, body {
+        padding-top: 95px; /* увеличенный отступ под мобильную шапку */
+    }
+
     header {
         height: auto;
         padding: 10px 0;
@@ -235,41 +239,40 @@ footer {
 
     nav {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
     .logo img {
-        height: 32px; /* меньше логотип */
+        height: 34px;
     }
 
     nav ul {
         flex-direction: row;
         justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap; /* чтобы не ломалось */
+        gap: 12px;
+        flex-wrap: wrap;
     }
 
     nav ul li a {
-        font-size: 13px;
-        padding: 5px 8px;
+        font-size: 14px;
+        padding: 6px 10px;
     }
 
-    /* СЛАЙДЕР */
+    /* Фото на телефоне не режутся */
     .slide {
         background-size: contain;
         background-color: black;
     }
 
-    /* ТЕКСТ */
     h1 {
-        font-size: 22px;
+        font-size: 24px;
+        line-height: 1.3;
     }
 
     .content {
-        padding-top: 30px;
+        padding-top: 20px;
     }
 
-    /* ЧАТ */
     #chatToggle,
     #chatBox {
         z-index: 10000;
@@ -428,5 +431,3 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
-
-
