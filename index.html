@@ -36,13 +36,12 @@ nav {
     align-items: center;
 }
 
-/* 3D КАЧАЮЩЕЕСЯ ЛОГО */
+/* 3D ЛОГО */
 .logo { perspective: 800px; }
 
 .logo img {
     height: 45px;
     animation: swing3D 4s ease-in-out infinite;
-    transform-style: preserve-3d;
 }
 
 @keyframes swing3D {
@@ -70,7 +69,6 @@ nav ul li a {
 
 nav ul li a.active {
     background: #007bff;
-    box-shadow: 0 0 10px rgba(0,123,255,0.6);
 }
 
 nav ul li a:hover {
@@ -114,10 +112,6 @@ nav ul li a:hover {
 
 .slide.active { opacity: 1; }
 
-.slide:nth-child(1) { background-position: 25% center; }
-.slide:nth-child(2) { background-position: center; }
-.slide:nth-child(3) { background-position: 30% center; }
-
 .content {
     position: absolute;
     z-index: 2;
@@ -132,7 +126,7 @@ nav ul li a:hover {
 .hidden { display: none; }
 
 h1 { font-size: 36px; margin-bottom: 20px; }
-p { font-size: 18px; line-height: 1.6; }
+p { font-size: 18px; }
 
 footer {
     position: absolute;
@@ -144,7 +138,7 @@ footer {
     z-index: 2;
 }
 
-/* ====== ЧАТ ====== */
+/* ===== ЧАТ ===== */
 
 #chatToggle {
     position: fixed;
@@ -171,9 +165,9 @@ footer {
     background: white;
     color: black;
     border-radius: 10px;
-    overflow: hidden;
     display: none;
     flex-direction: column;
+    overflow: hidden;
     z-index: 9999;
 }
 
@@ -204,14 +198,11 @@ footer {
     cursor: pointer;
 }
 
-/* МОБИЛКА */
-@media (max-width: 768px) {
-    h1 { font-size: 22px; }
-    p { font-size: 15px; }
-    .logo img { height: 35px; }
-    .slide:nth-child(1) { background-position: 40% center; }
-    .slide:nth-child(2) { background-position: 50% center; }
-    .slide:nth-child(3) { background-position: 45% center; }
+.edit-btn {
+    margin-left: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    color: blue;
 }
 </style>
 </head>
@@ -246,16 +237,26 @@ footer {
 
 <div id="about" class="content hidden">
 <h1>О компании</h1>
-<p>Твой оригинальный текст сохранён полностью.</p>
+<p>G4S — британская транснациональная частная военная и инкассаторская служба, 
+со штаб-квартирой в Лондоне, крупнейший в Европе и Африке, основана в 1901 году. 
+По числу сотрудников (по данным самой компании — около 800 тысяч). 
+Охраняли и перевозили ценности и медали на Олимпиаде 2012 в Лондоне 
+</br>Действует в более чем 90 странах 
+(Британия, Германия, Италия, Испания, Франция, Китай, Япония, Казахстан, 
+Узбекистан, Мали, Конго, Нигерия и другие)</p>
 </div>
 
 <div id="services" class="content hidden">
 <h1>Наши услуги</h1>
-<p>Твой оригинальный текст сохранён полностью.</p>
+<p>● Сбор и доставка выручки: Регулярная перевозка наличных из торговых точек, офисов, общепита в банк для зачисления на расчетный счет. 
+● Транспортировка ценностей: Доставка ценных бумаг, ювелирных изделий и важных документов. 
+● Доставка разменной монеты: Привоз наличных денег (мелких купюр/монет) из банка в кассу предприятия. 
+● Сопровождение материально ответственных лиц: Обеспечение безопасности сотрудников при перевозке ими ценностей.</p>
 </div>
 
 <footer>
 © 2026 G4S. Все права защищены.
+</br>Великобритания, Лондон, Victoria Street, 105, 5-й эт.
 </footer>
 </section>
 
@@ -282,16 +283,14 @@ current = (current + 1) % slides.length;
 slides[current].classList.add("active");
 }, 4000);
 
-/* Переключение разделов */
 function showSection(id, element){
 document.querySelectorAll(".content").forEach(el => el.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
-
 document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
 element.classList.add("active");
 }
 
-/* ====== ЛОГИКА ЧАТА ====== */
+/* ЧАТ */
 
 const chatBox = document.getElementById("chatBox");
 document.getElementById("chatToggle").onclick = () => {
@@ -317,6 +316,11 @@ socket.on("newMessage", (msg) => {
 renderMessage(msg);
 });
 
+socket.on("updateMessage", (msg) => {
+const div = document.getElementById(msg.id);
+if (div) div.innerHTML = formatMessage(msg);
+});
+
 function sendMessage() {
 const text = document.getElementById("msg").value;
 if (!text) return;
@@ -324,10 +328,24 @@ socket.emit("sendMessage", { text: text, sender: "client" });
 document.getElementById("msg").value = "";
 }
 
+function editMessage(id) {
+const newText = prompt("Изменить сообщение:");
+if (!newText) return;
+socket.emit("editMessage", { id: id, text: newText, sender: "client" });
+}
+
 function renderMessage(msg) {
 const div = document.createElement("div");
-div.innerHTML = "<b>" + msg.sender + ":</b> " + msg.text;
+div.id = msg.id;
+div.innerHTML = formatMessage(msg);
 document.getElementById("chat").appendChild(div);
+}
+
+function formatMessage(msg) {
+return "<b>" + msg.sender + ":</b> " + msg.text +
+(msg.edited ? " (изменено)" : "") +
+(msg.sender === "client" ? 
+"<span class='edit-btn' onclick='editMessage(" + msg.id + ")'>✏</span>" : "");
 }
 </script>
 
