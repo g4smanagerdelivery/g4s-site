@@ -36,7 +36,21 @@ nav {
     align-items: center;
 }
 
-.logo img { height: 45px; }
+/* 🔥 КРУТЯЩЕЕСЯ ЛОГО */
+.logo img {
+    height: 45px;
+    animation: rotateLogo 8s linear infinite;
+    transition: transform 0.3s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.1);
+}
+
+@keyframes rotateLogo {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 
 nav ul {
     list-style: none;
@@ -50,6 +64,19 @@ nav ul li a {
     color: white;
     text-decoration: none;
     cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+/* 🔥 АКТИВНЫЙ ПУНКТ */
+nav ul li a.active {
+    background: #007bff;
+    box-shadow: 0 0 10px rgba(0,123,255,0.6);
+}
+
+nav ul li a:hover {
+    background: rgba(255,255,255,0.15);
 }
 
 /* HERO */
@@ -60,7 +87,6 @@ nav ul li a {
     overflow: hidden;
 }
 
-/* затемнение */
 .hero::after {
     content: "";
     position: absolute;
@@ -90,12 +116,10 @@ nav ul li a {
 
 .slide.active { opacity: 1; }
 
-/* Фокус ПК */
 .slide:nth-child(1) { background-position: 25% center; }
 .slide:nth-child(2) { background-position: center; }
 .slide:nth-child(3) { background-position: 30% center; }
 
-/* CONTENT */
 .content {
     position: absolute;
     z-index: 2;
@@ -112,7 +136,6 @@ nav ul li a {
 h1 { font-size: 36px; margin-bottom: 20px; }
 p { font-size: 18px; line-height: 1.6; }
 
-/* FOOTER */
 footer {
     position: absolute;
     bottom: 0;
@@ -159,23 +182,14 @@ footer {
 #chatInput input { flex: 1; padding: 8px; border: none; }
 #chatInput button { width: 50px; border: none; background: #007bff; color: white; cursor: pointer; }
 
-/* 🔥 МОБИЛЬНАЯ АДАПТАЦИЯ */
+/* МОБИЛКА */
 @media (max-width: 768px) {
-
     h1 { font-size: 22px; }
     p { font-size: 15px; }
-
     .logo img { height: 35px; }
-
-    /* Меняем фокус картинок под телефон */
     .slide:nth-child(1) { background-position: 40% center; }
     .slide:nth-child(2) { background-position: 50% center; }
     .slide:nth-child(3) { background-position: 45% center; }
-
-    /* Немного уменьшаем затемнение */
-    .hero::after {
-        background: rgba(0,0,0,0.45);
-    }
 }
 </style>
 </head>
@@ -189,9 +203,9 @@ footer {
 <img src="g4s-logo.png" alt="G4S Logo">
 </div>
 <ul>
-<li><a onclick="showSection('home')">Главная</a></li>
-<li><a onclick="showSection('about')">О компании</a></li>
-<li><a onclick="showSection('services')">Услуги</a></li>
+<li><a class="nav-link active" onclick="showSection('home', this)">Главная</a></li>
+<li><a class="nav-link" onclick="showSection('about', this)">О компании</a></li>
+<li><a class="nav-link" onclick="showSection('services', this)">Услуги</a></li>
 </ul>
 </nav>
 </div>
@@ -210,31 +224,19 @@ footer {
 
 <div id="about" class="content hidden">
 <h1>О компании</h1>
-<p>
-G4S — британская транснациональная частная военная и инкассаторская служба,
-со штаб-квартирой в Лондоне, крупнейшая в Европе и Африке, основана в 1901 году.
-По числу сотрудников — около 800 тысяч.
-Охраняли и перевозили ценности на Олимпиаде 2012 в Лондоне.
-<br><br>
-Действует более чем в 90 странах.
-</p>
+<p>G4S — международная охранная и инкассаторская служба.</p>
 </div>
 
 <div id="services" class="content hidden">
 <h1>Наши услуги</h1>
-<p>
-• Сбор и доставка выручки<br><br>
+<p>• Сбор и доставка выручки<br><br>
 • Транспортировка ценностей<br><br>
-• Доставка разменной монеты<br><br>
-• Сопровождение материально ответственных лиц
-</p>
+• Сопровождение клиентов</p>
 </div>
 
 <footer>
-© 2026 G4S. Все права защищены.<br>
-Великобритания, Лондон, Victoria Street, 105, 5-й эт.
+© 2026 G4S. Все права защищены.
 </footer>
-
 </section>
 
 <div id="chatToggle">💬</div>
@@ -246,8 +248,6 @@ G4S — британская транснациональная частная �
 </div>
 </div>
 
-<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-
 <script>
 let slides = document.querySelectorAll(".slide");
 let current = 0;
@@ -258,46 +258,13 @@ current = (current + 1) % slides.length;
 slides[current].classList.add("active");
 }, 4000);
 
-function showSection(id){
+/* 🔥 Переключение разделов + активное меню */
+function showSection(id, element){
 document.querySelectorAll(".content").forEach(el => el.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
-}
 
-const chatBox = document.getElementById("chatBox");
-document.getElementById("chatToggle").onclick = () => {
-chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
-};
-
-let clientId = localStorage.getItem("clientId");
-if (!clientId) {
-clientId = "client_" + Math.random().toString(36).substr(2, 9);
-localStorage.setItem("clientId", clientId);
-}
-
-const socket = io("https://g4s-chat-server.onrender.com", {
-query: { clientId }
-});
-
-socket.on("loadMessages", (messages) => {
-document.getElementById("chat").innerHTML = "";
-messages.forEach(renderMessage);
-});
-
-socket.on("newMessage", (msg) => {
-renderMessage(msg);
-});
-
-function sendMessage() {
-const text = document.getElementById("msg").value;
-if (!text) return;
-socket.emit("sendMessage", { text: text, sender: "client" });
-document.getElementById("msg").value = "";
-}
-
-function renderMessage(msg) {
-const div = document.createElement("div");
-div.innerHTML = "<b>" + msg.sender + ":</b> " + msg.text;
-document.getElementById("chat").appendChild(div);
+document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
+element.classList.add("active");
 }
 </script>
 
