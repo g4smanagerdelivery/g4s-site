@@ -15,7 +15,7 @@ body {
 header {
     background: #111;
     color: white;
-    padding: 15px 0;
+    padding: 10px 0;
     position: fixed;
     width: 100%;
     z-index: 1000;
@@ -32,11 +32,17 @@ nav {
     align-items: center;
 }
 
-nav h2 {
-    margin: 0;
-    font-size: 24px;
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: center;
 }
 
+.logo img {
+    height: 45px;
+}
+
+/* MENU */
 nav ul {
     list-style: none;
     display: flex;
@@ -171,6 +177,10 @@ footer {
         padding: 0 15px;
     }
 
+    .logo img {
+        height: 35px;
+    }
+
     #chatBox {
         width: 95%;
         right: 2.5%;
@@ -184,7 +194,10 @@ footer {
 <header>
     <div class="container">
         <nav>
-            <h2>G4S</h2>
+            <div class="logo">
+                <img src="g4s-logo.png" alt="G4S Logo">
+            </div>
+
             <ul>
                 <li><a href="#">Главная</a></li>
                 <li><a href="#">О компании</a></li>
@@ -219,10 +232,8 @@ footer {
     © 2026 G4S. Все права защищены.
 </footer>
 
-<!-- CHAT BUTTON -->
 <div id="chatToggle">💬</div>
 
-<!-- CHAT BOX -->
 <div id="chatBox">
     <div id="chat"></div>
     <div id="chatInput">
@@ -234,7 +245,6 @@ footer {
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 <script>
-// SLIDER
 let slides = document.querySelectorAll(".slide");
 let current = 0;
 
@@ -245,13 +255,11 @@ function nextSlide() {
 }
 setInterval(nextSlide, 4000);
 
-// CHAT TOGGLE
 const chatBox = document.getElementById("chatBox");
 document.getElementById("chatToggle").onclick = () => {
     chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
 };
 
-// SOCKET
 let clientId = localStorage.getItem("clientId");
 if (!clientId) {
     clientId = "client_" + Math.random().toString(36).substr(2, 9);
