@@ -227,17 +227,57 @@ footer {
 
 @media (max-width: 768px) {
 
+    /* ШАПКА */
+    header {
+        height: auto;
+        padding: 10px 0;
+    }
+
+    nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .logo img {
+        height: 32px; /* меньше логотип */
+    }
+
+    nav ul {
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap; /* чтобы не ломалось */
+    }
+
+    nav ul li a {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
+
+    /* СЛАЙДЕР */
     .slide {
-        background-size: contain; /* на телефоне не режет */
+        background-size: contain;
         background-color: black;
     }
 
-    #chatToggle {
+    /* ТЕКСТ */
+    h1 {
+        font-size: 22px;
+    }
+
+    .content {
+        padding-top: 30px;
+    }
+
+    /* ЧАТ */
+    #chatToggle,
+    #chatBox {
         z-index: 10000;
     }
 
     #chatBox {
-        z-index: 10000;
+        width: 95%;
+        right: 2.5%;
     }
 }
 </style>
@@ -388,4 +428,5 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
+
 
