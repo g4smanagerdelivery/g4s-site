@@ -386,7 +386,9 @@ renderMessage(msg);
 
 socket.on("updateMessage", (msg) => {
 const div = document.getElementById(msg.id);
-if (div) div.innerHTML = formatMessage(msg);
+if (div) {
+    div.innerHTML = formatMessage(msg);
+}
 });
 
 function sendMessage() {
@@ -413,12 +415,13 @@ function formatMessage(msg) {
 return "<b>" + msg.sender + ":</b> " + msg.text +
 (msg.edited ? " (изменено)" : "") +
 (msg.sender === "client" ? 
-"<span class='edit-btn' onclick='editMessage(" + msg.id + ")'> ✏</span>" : "");
+"<span class='edit-btn' onclick=\"editMessage('" + msg.id + "')\"> ✏</span>" : "");
 }
 </script>
 
 </body>
 </html>
+
 
 
 
