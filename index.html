@@ -38,7 +38,7 @@ nav {
     align-items: center;
 }
 
-/* ===== 3D ЛОГО (правильная качель) ===== */
+/* ===== 3D ЛОГО ===== */
 
 .logo { perspective: 800px; }
 
@@ -81,7 +81,7 @@ nav ul li a:hover {
     background: rgba(255,255,255,0.15);
 }
 
-/* ===== HERO / СЛАЙДЕР ===== */
+/* ===== HERO ===== */
 
 .hero {
     position: relative;
@@ -112,7 +112,7 @@ nav ul li a:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-size: contain;   /* ВАЖНО — не обрезает */
+    background-size: contain; /* не обрезает */
     background-repeat: no-repeat;
     background-position: center;
     background-color: black;
@@ -223,7 +223,7 @@ footer {
     color: blue;
 }
 
-/* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+/* ===== МОБИЛКА ===== */
 
 @media (max-width: 768px) {
 
@@ -233,22 +233,16 @@ footer {
         font-size: 15px;
     }
 
-    nav ul {
-        gap: 12px;
-    }
+    nav ul { gap: 12px; }
 
     nav ul li a {
         font-size: 14px;
         padding: 5px 8px;
     }
 
-    .logo img {
-        height: 38px;
-    }
+    .logo img { height: 38px; }
 
-    .slide {
-        background-size: contain; /* не обрезает */
-    }
+    .slide { background-size: contain; }
 
     #chatBox {
         width: 95%;
@@ -311,6 +305,20 @@ footer {
 </footer>
 </section>
 
+<!-- ===== ЧАТ ===== -->
+
+<div id="chatToggle">💬</div>
+
+<div id="chatBox">
+<div id="chat"></div>
+<div id="chatInput">
+<input id="msg" placeholder="Введите сообщение">
+<button onclick="sendMessage()">➤</button>
+</div>
+</div>
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
 <script>
 let slides = document.querySelectorAll(".slide");
 let current = 0;
@@ -326,6 +334,64 @@ document.querySelectorAll(".content").forEach(el => el.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
 element.classList.add("active");
+}
+
+/* ===== ЧАТ ===== */
+
+const chatBox = document.getElementById("chatBox");
+document.getElementById("chatToggle").onclick = () => {
+chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
+};
+
+let clientId = localStorage.getItem("clientId");
+if (!clientId) {
+clientId = "client_" + Math.random().toString(36).substr(2, 9);
+localStorage.setItem("clientId", clientId);
+}
+
+const socket = io("https://g4s-chat-server.onrender.com", {
+query: { clientId }
+});
+
+socket.on("loadMessages", (messages) => {
+document.getElementById("chat").innerHTML = "";
+messages.forEach(renderMessage);
+});
+
+socket.on("newMessage", (msg) => {
+renderMessage(msg);
+});
+
+socket.on("updateMessage", (msg) => {
+const div = document.getElementById(msg.id);
+if (div) div.innerHTML = formatMessage(msg);
+});
+
+function sendMessage() {
+const text = document.getElementById("msg").value;
+if (!text) return;
+socket.emit("sendMessage", { text: text, sender: "client" });
+document.getElementById("msg").value = "";
+}
+
+function editMessage(id) {
+const newText = prompt("Изменить сообщение:");
+if (!newText) return;
+socket.emit("editMessage", { id: id, text: newText, sender: "client" });
+}
+
+function renderMessage(msg) {
+const div = document.createElement("div");
+div.id = msg.id;
+div.innerHTML = formatMessage(msg);
+document.getElementById("chat").appendChild(div);
+}
+
+function formatMessage(msg) {
+return "<b>" + msg.sender + ":</b> " + msg.text +
+(msg.edited ? " (изменено)" : "") +
+(msg.sender === "client" ? 
+"<span class='edit-btn' onclick='editMessage(" + msg.id + ")'> ✏</span>" : "");
 }
 </script>
 
