@@ -429,6 +429,23 @@ const socket = io("https://g4s-chat-server.onrender.com", {
 query: { clientId }
 });
 
+/* ===== ИНДИКАТОР ПЕЧАТАЕТ ===== */
+
+const input = document.getElementById("msg");
+
+input.addEventListener("input", () => {
+    socket.emit("typing", { clientId });
+});
+
+socket.on("typing", () => {
+    const typing = document.getElementById("typing");
+    typing.innerText = "Администратор печатает...";
+    
+    setTimeout(() => {
+        typing.innerText = "";
+    }, 2000);
+});
+
 socket.on("loadMessages", (messages) => {
 document.getElementById("chat").innerHTML = "";
 messages.forEach(renderMessage);
@@ -495,4 +512,5 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
+
 
