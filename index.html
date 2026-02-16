@@ -428,7 +428,17 @@ localStorage.setItem("clientId", clientId);
 const socket = io("https://g4s-chat-server.onrender.com", {
 query: { clientId }
 });
+    
+/* ===== СТАТУС ОНЛАЙН ===== */
 
+socket.on("connect", () => {
+    document.getElementById("status").innerText = "● Онлайн";
+});
+
+socket.on("disconnect", () => {
+    document.getElementById("status").innerText = "● Не в сети";
+});
+    
 /* ===== ИНДИКАТОР ПЕЧАТАЕТ ===== */
 
 const input = document.getElementById("msg");
@@ -512,5 +522,6 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
+
 
 
