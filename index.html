@@ -220,6 +220,29 @@ footer {
     gap: 8px;
 }
 
+    .edit-btn {
+    margin-top: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid #007bff;
+    color: #007bff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit-btn:hover {
+    background: #007bff;
+    color: white;
+}
+
+.message small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 4px;
+}
+    
 /* bubbles */
 .message {
     max-width: 75%;
@@ -499,9 +522,46 @@ div.classList.add(msg.sender === "client" ? "client-msg" : "admin-msg");
 
 let editButton = "";
 if (msg.sender === "client") {
-    editButton = "<span class='edit-btn' onclick=\"editMessage('" + msg.id + "')\"> ✏</span>";
+    editButton = `<button class="edit-btn" onclick="startEdit('${msg.id}')">Изменить</button>`;
 }
 
+div.innerHTML = `
+    <div class="msg-text">${msg.text}</div>
+    ${editButton}
+    <small>
+        ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+        ${msg.edited ? " (изменено)" : ""}
+    </small>
+`;
+
+document.getElementById("chat").appendChild(div);
+scrollToBottom();
+}
+let editingMessageId = null;
+
+function startEdit(id) {
+    const msgDiv = document.getElementById(id);
+    const textDiv = msgDiv.querySelector(".msg-text");
+    const oldText = textDiv.innerText;
+
+    textDiv.innerHTML = `
+        <input id="editInput" value="${oldText}" style="width:100%">
+        <button onclick="saveEdit('${id}')">Сохранить</button>
+    `;
+
+    editingMessageId = id;
+}
+    function saveEdit(id) {
+    const input = document.getElementById("editInput");
+    if (!input.value) return;
+
+    socket.emit("editMessage", {
+        id: id,
+        text: input.value,
+        sender: "client"
+    });
+}
+    
 div.innerHTML =
     msg.text +
     editButton +
@@ -529,7 +589,3 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
-
-
-
-
