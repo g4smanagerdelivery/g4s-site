@@ -160,7 +160,7 @@ footer {
     background: rgba(0,0,0,0.8);
 }
 
-/* ===== ЧАТ ===== */
+/* ===== ЧАТ G4S STYLE ===== */
 
 #chatToggle {
     position: fixed;
@@ -177,32 +177,84 @@ footer {
     align-items: center;
     cursor: pointer;
     z-index: 9999;
+    box-shadow: 0 0 15px rgba(0,123,255,0.5);
 }
 
 #chatBox {
     position: fixed;
     bottom: 90px;
     right: 20px;
-    width: 320px;
-    background: white;
-    color: black;
-    border-radius: 10px;
+    width: 340px;
+    background: #0d1117;
+    color: white;
+    border-radius: 14px;
     display: none;
     flex-direction: column;
     overflow: hidden;
     z-index: 9999;
+    border: 1px solid #1f2937;
+}
+
+/* header */
+.chat-header {
+    padding: 12px;
+    background: #111827;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status {
+    font-size: 12px;
+    color: #22c55e;
 }
 
 #chat {
-    height: 250px;
+    height: 260px;
     overflow-y: auto;
     padding: 10px;
-    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* bubbles */
+.message {
+    max-width: 75%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    position: relative;
+}
+
+.client-msg {
+    align-self: flex-end;
+    background: #007bff;
+}
+
+.admin-msg {
+    align-self: flex-start;
+    background: #1f2937;
+}
+
+.message small {
+    display: block;
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 3px;
+}
+
+#typing {
+    font-size: 12px;
+    opacity: 0.7;
+    padding-left: 10px;
 }
 
 #chatInput {
     display: flex;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #1f2937;
 }
 
 #chatInput input {
@@ -210,6 +262,8 @@ footer {
     padding: 10px;
     border: none;
     outline: none;
+    background: #0d1117;
+    color: white;
 }
 
 #chatInput button {
@@ -218,13 +272,6 @@ footer {
     background: #007bff;
     color: white;
     cursor: pointer;
-}
-
-.edit-btn {
-    margin-left: 5px;
-    font-size: 12px;
-    cursor: pointer;
-    color: blue;
 }
 
 /* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
@@ -332,7 +379,14 @@ footer {
 <div id="chatToggle">💬</div>
 
 <div id="chatBox">
+<div class="chat-header">
+<span>G4S Support</span>
+<span id="status" class="status">● Онлайн</span>
+</div>
+
 <div id="chat"></div>
+<div id="typing"></div>
+
 <div id="chatInput">
 <input id="msg" placeholder="Введите сообщение">
 <button onclick="sendMessage()">➤</button>
@@ -413,8 +467,22 @@ socket.emit("editMessage", {
 function renderMessage(msg) {
 const div = document.createElement("div");
 div.id = msg.id;
-div.innerHTML = formatMessage(msg);
+div.classList.add("message");
+div.classList.add(msg.sender === "client" ? "client-msg" : "admin-msg");
+
+div.innerHTML = msg.text +
+"<small>" +
+new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) +
+(msg.edited ? " (изменено)" : "") +
+"</small>";
+
 document.getElementById("chat").appendChild(div);
+scrollToBottom();
+}
+
+function scrollToBottom(){
+const chat = document.getElementById("chat");
+chat.scrollTop = chat.scrollHeight;
 }
 
 function formatMessage(msg) {
@@ -427,3 +495,4 @@ return "<b>" + msg.sender + ":</b> " + msg.text +
 
 </body>
 </html>
+
