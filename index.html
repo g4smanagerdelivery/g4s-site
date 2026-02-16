@@ -489,10 +489,19 @@ renderMessage(msg);
 });
 
 socket.on("updateMessage", (msg) => {
-const div = document.getElementById(msg.id);
-if (div) {
-    div.innerHTML = formatMessage(msg);
-}
+    const div = document.getElementById(msg.id);
+    if (!div) return;
+
+    div.innerHTML = `
+        <div class="msg-text">${msg.text}</div>
+        ${msg.sender === "client" ? 
+            `<button class="edit-btn" onclick="startEdit('${msg.id}')">Изменить</button>` 
+            : ""}
+        <small>
+            ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+            ${msg.edited ? " (изменено)" : ""}
+        </small>
+    `;
 });
 
 function sendMessage() {
@@ -556,22 +565,11 @@ function startEdit(id) {
     if (!input.value) return;
 
     socket.emit("editMessage", {
+        clientId: clientId,   // ВАЖНО
         id: id,
         text: input.value,
         sender: "client"
     });
-}
-    
-div.innerHTML =
-    msg.text +
-    editButton +
-    "<small>" +
-    new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) +
-    (msg.edited ? " (изменено)" : "") +
-    "</small>";
-
-document.getElementById("chat").appendChild(div);
-scrollToBottom();
 }
 
 function scrollToBottom(){
@@ -579,13 +577,8 @@ const chat = document.getElementById("chat");
 chat.scrollTop = chat.scrollHeight;
 }
 
-function formatMessage(msg) {
-return "<b>" + msg.sender + ":</b> " + msg.text +
-(msg.edited ? " (изменено)" : "") +
-(msg.sender === "client" ? 
-"<span class='edit-btn' onclick=\"editMessage('" + msg.id + "')\"> ✏</span>" : "");
-}
 </script>
 
 </body>
 </html>
+
